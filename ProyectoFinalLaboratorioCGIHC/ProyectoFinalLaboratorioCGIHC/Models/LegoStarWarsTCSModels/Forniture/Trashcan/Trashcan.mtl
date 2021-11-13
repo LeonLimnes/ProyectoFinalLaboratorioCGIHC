@@ -1,0 +1,13 @@
+# Blender MTL File: 'untitled.blend'
+# Material Count: 1
+
+newmtl metallic
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\franc\\Desktop\\legoStarWarsModels\\_NinjaRipper\\2021.10.15_11.40.43_LEGOStarWarsSaga.exe_31664\\2021.10.15_15.55.07_LEGOStarWarsSaga.exe\\metallic.png

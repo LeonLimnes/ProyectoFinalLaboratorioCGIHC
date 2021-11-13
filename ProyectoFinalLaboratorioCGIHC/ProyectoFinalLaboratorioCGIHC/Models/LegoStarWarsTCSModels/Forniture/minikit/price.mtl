@@ -1,0 +1,35 @@
+# Blender MTL File: 'untitled.blend'
+# Material Count: 3
+
+newmtl Tex_0027_2_dds
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\franc\\Desktop\\legoStarWarsModels\\_NinjaRipper\\2021.10.18_15.42.43_LEGOStarWarsSaga.exe_3828\\2021.10.19_00.30.42_LEGOStarWarsSaga.exe\\Tex_0027_2.dds
+
+newmtl Tex_0046_0_dds
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\franc\\Desktop\\legoStarWarsModels\\_NinjaRipper\\2021.10.18_15.42.43_LEGOStarWarsSaga.exe_3828\\2021.10.19_00.30.42_LEGOStarWarsSaga.exe\\Tex_0046_0.dds
+
+newmtl Tex_0047_0_dds
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\franc\\Desktop\\legoStarWarsModels\\_NinjaRipper\\2021.10.18_15.42.43_LEGOStarWarsSaga.exe_3828\\2021.10.19_00.30.42_LEGOStarWarsSaga.exe\\Tex_0047_0.dds
