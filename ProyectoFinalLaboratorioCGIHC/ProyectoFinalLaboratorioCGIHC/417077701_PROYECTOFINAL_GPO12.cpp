@@ -37,7 +37,7 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Camera
-Camera  camera(glm::vec3(-100.0f, 2.0f, -45.0f));
+Camera  camera(glm::vec3(0.0f, 0.0f, 0.0f));
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -86,9 +86,9 @@ int playIndex = 0;
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
 	glm::vec3(posX,posY,posZ),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0)
+	glm::vec3(-10.0,-10.0,-10.0),
+	glm::vec3(-10.0,-10.0,-10.0),
+	glm::vec3(-10.0,-10.0,-10.0),
 };
 
 glm::vec3 LightP1;
@@ -191,6 +191,12 @@ int main()
 	Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
 	Shader animShader("Shaders/anim.vs", "Shaders/anim.frag");
 
+
+	/********************************************************************
+	*																	*
+	*						DECLARACION DE MODELOS						*	
+	*																	*
+	*********************************************************************/
 	Model BotaDer((char*)"Models/Personaje/bota.obj");
 	Model PiernaDer((char*)"Models/Personaje/piernader.obj");
 	Model PiernaIzq((char*)"Models/Personaje/piernaizq.obj");
@@ -198,6 +204,10 @@ int main()
 	Model BrazoDer((char*)"Models/Personaje/brazoder.obj");
 	Model BrazoIzq((char*)"Models/Personaje/brazoizq.obj");
 	Model Cabeza((char*)"Models/Personaje/cabeza.obj");
+
+
+	//Cantina
+	Model Cantina((char*)"Models/LegoStarWarsTCSModels/Locations/MosEisleyCantina/cantina.obj");
 	// Build and compile our shader program
 
 	//Modelo de animación
@@ -434,8 +444,8 @@ int main()
 		// == ==========================
 		// Directional light
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.3f, 0.3f, 0.3f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
 
 
@@ -518,10 +528,12 @@ int main()
 		glm::mat4 tmp = glm::mat4(1.0f); //Temp
 
 
-
-		//Carga de modelo 
+		/*********************************
+		*								 *
+		*		CARGA DE MODELOS		 *
+		*								 *
+		**********************************/
 		//Personaje
-		view = camera.GetViewMatrix();
 		glm::mat4 model(1);
 		tmp = model = glm::translate(model, glm::vec3(0, 1, 0));
 		model = glm::translate(model,glm::vec3(posX,posY,posZ));
@@ -529,7 +541,6 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Torso.Draw(lightingShader);
 		//Pierna Izq
-		view = camera.GetViewMatrix();
 		model = glm::translate(tmp, glm::vec3(-0.5f, 0.0f, -0.1f));
 		model = glm::translate(model, glm::vec3(posX, posY, posZ));
 		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0));
@@ -537,13 +548,11 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		PiernaDer.Draw(lightingShader);
 		//Pie Izq
-		view = camera.GetViewMatrix();
 		model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		BotaDer.Draw(lightingShader);
 
 		//Pierna Der
-		view = camera.GetViewMatrix();
 		model = glm::translate(tmp, glm::vec3(0.5f, 0.0f, -0.1f));
 		model = glm::translate(model, glm::vec3(posX, posY, posZ));
 		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -556,7 +565,6 @@ int main()
 		BotaDer.Draw(lightingShader);
 
 		//Brazo derecho
-		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(posX, posY, posZ));
 		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -566,7 +574,6 @@ int main()
 		BrazoDer.Draw(lightingShader);
 
 		//Brazo Izquierdo
-		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(posX, posY, posZ));
 		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -575,7 +582,6 @@ int main()
 		BrazoIzq.Draw(lightingShader);
 
 		//Cabeza
-		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(posX, posY, posZ));
 		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0));
@@ -583,11 +589,16 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Cabeza.Draw(lightingShader);
 
+		//Cantina
+		model = glm::mat4(1);
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		Cantina.Draw(lightingShader);
 
 		glBindVertexArray(0);
 
 		/*_______________________________Personaje Animado___________________________*/ 
-		animShader.Use();
+		/*animShader.Use();
 		modelLoc = glGetUniformLocation(animShader.Program, "model");
 		viewLoc = glGetUniformLocation(animShader.Program, "view");
 		projLoc = glGetUniformLocation(animShader.Program, "projection");
@@ -601,20 +612,7 @@ int main()
 		glUniform3f(glGetUniformLocation(animShader.Program, "light.diffuse"), 0.0f, 1.0f, 1.0f);
 		glUniform3f(glGetUniformLocation(animShader.Program, "light.specular"), 0.5f, 0.5f, 0.5f);
 		glUniform3f(glGetUniformLocation(animShader.Program, "light.direction"),0.0f, -1.0f, -1.0f);
-		view = camera.GetViewMatrix();
-
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(PosIni.x+5.0f,PosIni.y-1.0f,PosIni.z));
-		model = glm::scale(model, glm::vec3(0.02f));	// it's a bit too big for our scene, so scale it down
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		animacionPersonaje.Draw(animShader);
-
-
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(PosIni.x - 5.0f, PosIni.y - 1.0f, PosIni.z));
-		model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glBindVertexArray(0);
+		view = camera.GetViewMatrix();*/
 
 
 
