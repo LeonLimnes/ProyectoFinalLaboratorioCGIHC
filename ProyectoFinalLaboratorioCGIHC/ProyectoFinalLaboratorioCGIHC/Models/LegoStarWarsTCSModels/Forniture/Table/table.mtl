@@ -1,7 +1,7 @@
 # Blender MTL File: 'table.blend'
 # Material Count: 3
 
-newmtl Tex_0006_0_dds
+newmtl Tex_0006_0_dds.001
 Ns 225.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
@@ -12,7 +12,7 @@ d 1.000000
 illum 2
 map_Kd tableTop.png
 
-newmtl stool
+newmtl stool.002
 Ns 225.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
@@ -23,7 +23,7 @@ d 1.000000
 illum 2
 map_Kd stool.png
 
-newmtl tableTop
+newmtl tableTop.001
 Ns 225.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000

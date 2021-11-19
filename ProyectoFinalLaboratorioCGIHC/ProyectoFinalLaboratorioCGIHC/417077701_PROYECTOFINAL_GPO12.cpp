@@ -1,5 +1,8 @@
 #include <iostream>
 #include <cmath>
+#include <array>
+
+using namespace std;
 
 // GLEW
 #include <GL/glew.h>
@@ -135,8 +138,50 @@ void interpolation(void)
 }
 
 
+void drawInPosition(vec3 position, Model Object, GLuint VAO,Shader shader)
+{
+	mat4 model = mat4(1);
+	model = translate(model, position);
+	glBindVertexArray(VAO);
+	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	Object.Draw(shader);
+}
 
+void drawFromPivot(vec3 position, Model Object, GLuint VAO, Shader shader, mat4 Pivot)
+{
+	mat4 model = mat4(1);
+	model = translate(Pivot, position);
+	glBindVertexArray(VAO);
+	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	Object.Draw(shader);
+}
 
+void drawTableTwoObjects(vec3 position, GLuint VAO, Shader shader, Model Object, Model Table, float orientation,vec3 offset) {
+	//Table 
+	mat4 modelMesa;
+	mat4 model = mat4(1);
+	modelMesa = translate(model, position);
+	modelMesa = rotate(modelMesa, radians(orientation), vec3(0.0f, 1.0f, 0.0f));
+	glBindVertexArray(VAO);
+	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
+	Table.Draw(shader);
+
+	//Object 1
+	drawFromPivot(offset, Object, VAO, shader, modelMesa);
+	
+	//Object 2
+	drawFromPivot(vec3(offset.x, offset.y, -offset.z), Object, VAO, shader, modelMesa);
+
+}
+
+struct Position
+{
+	vec3 coordinates;
+	float orientation;
+};
 int main()
 {
 	// Init GLFW
@@ -360,7 +405,28 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	//Posiciones de los bancos
+	array<vec3,14> stoolPositions = {
+		vec3(-0.764f, 0.027f, -0.929f),
+		vec3(-1.23f, 0.027f, -0.929f),
+		vec3(-1.23f, 0.027f, -0.929f),
+		vec3(-1.68f, 0.027f, -0.929f),
+		vec3(-2.1526f, 0.027f, -0.929f),
+		vec3(-2.6063f, 0.027f, -0.929f),
+		vec3(-3.0743f, 0.027f, -0.929f),
+		vec3(-3.0460f, 0.027f, 0.55201f),
+		vec3(-3.0460f, 0.027f, 0.55201f),
+		vec3(-2.6058f, 0.027f, 0.55201f),
+		vec3(-2.1471f, 0.027f, 0.55201f),
+		vec3(-1.6814f, 0.027f, 0.55201f),
+		vec3(-1.2191f, 0.027f, 0.55201f),
+		vec3(-0.77156f, 0.027f, 0.55201f)
+	};
 
+	//Posición de mesas con 2 objetos
+	array<struct Position, 1> tablePositions = {
+		{ vec3(-2.6678f, 0.14909f, -2.1579f),0.0f}
+	};
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -608,127 +674,36 @@ int main()
 		/*
 		 * Bancos de la barra
 		*/
-		//Stool 1
-		model = glm::mat4(1);
-		model = translate(model, vec3(-0.764f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 2
-		model = glm::mat4(1);
-		model = translate(model, vec3(-1.23f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 2
-		model = glm::mat4(1);
-		model = translate(model, vec3(-1.23f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 3
-		model = glm::mat4(1);
-		model = translate(model, vec3(-1.68f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 4
-		model = glm::mat4(1);
-		model = translate(model, vec3(-2.1526f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 5
-		model = glm::mat4(1);
-		model = translate(model, vec3(-2.6063f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 6
-		model = glm::mat4(1);
-		model = translate(model, vec3(-3.0743f, 0.027f, -0.929f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 7
-		model = glm::mat4(1);
-		model = translate(model, vec3(-3.0460f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 7
-		model = glm::mat4(1);
-		model = translate(model, vec3(-3.0460f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 8
-		model = glm::mat4(1);
-		model = translate(model, vec3(-2.6058f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 9
-		model = glm::mat4(1);
-		model = translate(model, vec3(-2.1471f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 10
-		model = glm::mat4(1);
-		model = translate(model, vec3(-1.6814f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 11
-		model = glm::mat4(1);
-		model = translate(model, vec3(-1.2191f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 12
-		model = glm::mat4(1);
-		model = translate(model, vec3(-0.77156f, 0.027f, 0.55201f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
+		for (int i = 0; i < stoolPositions.size(); i++) {
+			drawInPosition(stoolPositions[i], Stool, VAO, lightingShader);
+		}
 		/*******************************************
 		 *********** Carga mesas con banco**********
 		*******************************************/
+		for (int i = 0; i < tablePositions.size(); i++) {
+			drawTableTwoObjects(tablePositions[i].coordinates, VAO, lightingShader,
+				Stool, Table, tablePositions[i].orientation, vec3(0.0f, -0.16f, 0.27f));
+		}
 		//************Mesa 1*************
 		//Table 1
 		mat4 modelMesa;
-		model = mat4(1);
-		modelMesa = translate(model, vec3(-2.6678f, 0.054909f, -2.1579f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
+		//model = mat4(1);
+		//modelMesa = translate(model, vec3(-2.6678f, 0.14909f, -2.1579f));
+		//glBindVertexArray(VAO);
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
+		//Table.Draw(lightingShader);
 
-		//Stool 13
-		model = translate(modelMesa, vec3(0.01f, -0.091f, 0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
+		////Stool 13
+		//model = translate(modelMesa, vec3(0.0f, -0.16f, 0.27f));
+		//glBindVertexArray(VAO);
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//Stool.Draw(lightingShader);
 
-		//Stool 14
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
+		////Stool 14
+		//model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
+		//glBindVertexArray(VAO);
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//Stool.Draw(lightingShader);
 
 		//************Mesa 2*************
 		//Table 2
