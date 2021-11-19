@@ -424,8 +424,14 @@ int main()
 	};
 
 	//Posición de mesas con 2 objetos
-	array<struct Position, 1> tablePositions = {
-		{ vec3(-2.6678f, 0.14909f, -2.1579f),0.0f}
+	array<Position, 7> tablePositions = {
+		Position { vec3(-2.6678f, 0.14909f, -2.1579f),0.0f },
+		Position { vec3(-1.0947f, 0.14909f, -2.042f),90.0f },
+		Position { vec3(0.8282f, 0.14909f, -1.7235f),45.0f },
+		Position { vec3(1.91f, 0.14909f, -0.2404f),0.0f },
+		Position { vec3(0.97f, 0.14909f, 1.41f),-45.0f },
+		Position { vec3(-0.83f, 0.14909f, 1.55f),90.0f },
+		Position { vec3(-3.6071f, 0.14909f, 1.5123f),0.0f }
 	};
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO, EBO;
@@ -677,179 +683,24 @@ int main()
 		for (int i = 0; i < stoolPositions.size(); i++) {
 			drawInPosition(stoolPositions[i], Stool, VAO, lightingShader);
 		}
+
 		/*******************************************
-		 *********** Carga mesas con banco**********
+		
+					Carga mesas con banco
+
 		*******************************************/
+
 		for (int i = 0; i < tablePositions.size(); i++) {
 			drawTableTwoObjects(tablePositions[i].coordinates, VAO, lightingShader,
 				Stool, Table, tablePositions[i].orientation, vec3(0.0f, -0.16f, 0.27f));
 		}
-		//************Mesa 1*************
-		//Table 1
-		mat4 modelMesa;
-		//model = mat4(1);
-		//modelMesa = translate(model, vec3(-2.6678f, 0.14909f, -2.1579f));
-		//glBindVertexArray(VAO);
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		//Table.Draw(lightingShader);
-
-		////Stool 13
-		//model = translate(modelMesa, vec3(0.0f, -0.16f, 0.27f));
-		//glBindVertexArray(VAO);
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//Stool.Draw(lightingShader);
-
-		////Stool 14
-		//model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		//glBindVertexArray(VAO);
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//Stool.Draw(lightingShader);
-
-		//************Mesa 2*************
-		//Table 2
-		model = mat4(1);
-		modelMesa = translate(model, vec3(-0.9895f, 0.054909f, -2.1579f));
-		modelMesa = rotate(modelMesa, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-
-		//Stool 13
-		model = translate(modelMesa, vec3(0.01f, -0.091f, 0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 14
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//************Mesa 3*************
-		//Table 3
-		model = mat4(1);
-		modelMesa = rotate(modelMesa, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		modelMesa = translate(model, vec3(-3.6071f, 0.054909f, 1.51123));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-
-		//Stool 15
-		model = translate(modelMesa, vec3(0.01f, -0.091f, 0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 16
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-
-		//************Mesa 4*************
-		//Table 4
-		model = mat4(1);
-		modelMesa = translate(model, vec3(-0.8422f,0.054909f, 1.51123));
-		modelMesa = rotate(modelMesa, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-
-		//Stool 17
-		model = translate(modelMesa, vec3(0.01f, -0.091f, 0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 18
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//************Mesa 5*************
-		//Table 5
-		model = mat4(1);
-		modelMesa = rotate(modelMesa, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		modelMesa = translate(model, vec3(0.69804f, 0.054909f, -1.5735));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-
-		//Stool 19
-		model = translate(modelMesa, vec3(-0.36f, -0.091f, 0.06f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 20
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 21
-		model = translate(modelMesa, vec3(0.16f, -0.091f, 0.31f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-
-		//************Mesa 6*************
-		//Table 5
-		model = mat4(1);
-		modelMesa = translate(model, vec3(1.2064f, 0.054909f, 1.7052));
-		modelMesa = rotate(modelMesa, radians(45.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-
-		//Stool 22
-		model = translate(modelMesa, vec3(-0.36f, -0.091f, 0.06f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 23
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 24
-		model = translate(modelMesa, vec3(0.16f, -0.091f, 0.31f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-
-		//************Mesa 7*************
-		//Table 7
-		model = mat4(1);
-		modelMesa = translate(model, vec3(1.7278f, 0.054909f, 0.09988));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-
-		//Stool 25
-		model = translate(modelMesa, vec3(0.01f, -0.091f, 0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
-		//Stool 26
-		model = translate(modelMesa, vec3(0.01f, -0.091f, -0.3767f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Stool.Draw(lightingShader);
-
+		
 		/*******************************************
 		 *********** Carga mesas con sillion**********
 		*******************************************/
 		//************Mesa 8*************
 		//Table 8
+		mat4 modelMesa = mat4(1);
 		model = mat4(1);
 		modelMesa = translate(model, vec3(0.5606f, 0.054909f, -3.63));
 		glBindVertexArray(VAO);
