@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+using namespace glm;
+
 //Load Models
 #include "SOIL2/SOIL2.h"
 
@@ -208,11 +210,13 @@ int main()
 
 	//Cantina
 	Model Cantina((char*)"Models/LegoStarWarsTCSModels/Locations/MosEisleyCantina/cantina.obj");
-	// Build and compile our shader program
 
-	//Modelo de animación
-	ModelAnim animacionPersonaje("Animaciones/Personaje2/MacarenaDance.dae");
-	animacionPersonaje.initShaders(animShader.Program);
+	//Banco
+	Model Stool((char*)"Models/LegoStarWarsTCSModels/Forniture/Stool/Stool.obj");
+
+	////Modelo de animación
+	//ModelAnim animacionPersonaje("Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooper}.fbx");
+	//animacionPersonaje.initShaders(animShader.Program);
 
 
 	//Inicialización de KeyFrames
@@ -595,25 +599,36 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Cantina.Draw(lightingShader);
 
+
+		//Stool
+		model = glm::mat4(1);
+		model = translate(model, vec3(-0.764f, 0.027f, -0.929f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		Stool.Draw(lightingShader);
+
 		glBindVertexArray(0);
 
-		/*_______________________________Personaje Animado___________________________*/ 
-		/*animShader.Use();
-		modelLoc = glGetUniformLocation(animShader.Program, "model");
-		viewLoc = glGetUniformLocation(animShader.Program, "view");
-		projLoc = glGetUniformLocation(animShader.Program, "projection");
+		///*_______________________________Personaje Animado___________________________*/ 
+		//animShader.Use();
+		//modelLoc = glGetUniformLocation(animShader.Program, "model");
+		//viewLoc = glGetUniformLocation(animShader.Program, "view");
+		//projLoc = glGetUniformLocation(animShader.Program, "projection");
 
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		glUniform3f(glGetUniformLocation(animShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f);
-		glUniform1f(glGetUniformLocation(animShader.Program, "material.shininess"), 32.0f);
-		glUniform3f(glGetUniformLocation(animShader.Program, "light.ambient"), 0.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(animShader.Program, "light.diffuse"), 0.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(animShader.Program, "light.specular"), 0.5f, 0.5f, 0.5f);
-		glUniform3f(glGetUniformLocation(animShader.Program, "light.direction"),0.0f, -1.0f, -1.0f);
-		view = camera.GetViewMatrix();*/
-
+		//glUniform3f(glGetUniformLocation(animShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f);
+		//glUniform1f(glGetUniformLocation(animShader.Program, "material.shininess"), 32.0f);
+		//glUniform3f(glGetUniformLocation(animShader.Program, "light.ambient"), 0.0f, 1.0f, 1.0f);
+		//glUniform3f(glGetUniformLocation(animShader.Program, "light.diffuse"), 0.0f, 1.0f, 1.0f);
+		//glUniform3f(glGetUniformLocation(animShader.Program, "light.specular"), 0.5f, 0.5f, 0.5f);
+		//glUniform3f(glGetUniformLocation(animShader.Program, "light.direction"),0.0f, -1.0f, -1.0f);
+		//view = camera.GetViewMatrix();
+		//model = glm::mat4(1);
+		//glBindVertexArray(VAO);
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//animacionPersonaje.Draw(animShader);
 
 
 
