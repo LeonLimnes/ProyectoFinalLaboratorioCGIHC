@@ -138,27 +138,33 @@ void interpolation(void)
 }
 
 
-void drawInPosition(vec3 position, Model Object, GLuint VAO,Shader shader)
+void drawInPosition(vec3 position, Model Object, GLuint VAO,Shader shader, vec3 rotation)
 {
 	mat4 model = mat4(1);
 	model = translate(model, position);
+	model = rotate(model, radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
+	model = rotate(model, radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
+	model = rotate(model, radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 	glBindVertexArray(VAO);
 	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	Object.Draw(shader);
 }
 
-void drawFromPivot(vec3 position, Model Object, GLuint VAO, Shader shader, mat4 Pivot)
+void drawFromPivot(vec3 position, Model Object, GLuint VAO, Shader shader, mat4 Pivot, vec3 rotation)
 {
 	mat4 model = mat4(1);
 	model = translate(Pivot, position);
+	model = rotate(model, radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
+	model = rotate(model, radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
+	model = rotate(model, radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 	glBindVertexArray(VAO);
 	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	Object.Draw(shader);
 }
 
-void drawTableTwoObjects(vec3 position, GLuint VAO, Shader shader, Model Object, Model Table, float orientation,vec3 offset) {
+void drawTableTwoObjects(vec3 position, GLuint VAO, Shader shader, Model Object, Model Table, float orientation,vec3 offset, vec3 rotation1, vec3 rotation2) {
 	//Table 
 	mat4 modelMesa;
 	mat4 model = mat4(1);
@@ -170,10 +176,10 @@ void drawTableTwoObjects(vec3 position, GLuint VAO, Shader shader, Model Object,
 	Table.Draw(shader);
 
 	//Object 1
-	drawFromPivot(offset, Object, VAO, shader, modelMesa);
+	drawFromPivot(offset, Object, VAO, shader, modelMesa, rotation1);
 	
 	//Object 2
-	drawFromPivot(vec3(offset.x, offset.y, -offset.z), Object, VAO, shader, modelMesa);
+	drawFromPivot(vec3(offset.x, offset.y, -offset.z), Object, VAO, shader, modelMesa, rotation2);
 
 }
 
@@ -230,8 +236,6 @@ int main()
 
 	// OpenGL options
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Shader lightingShader("Shaders/lighting.vs", "Shaders/lighting.frag");
 	Shader lampShader("Shaders/lamp.vs", "Shaders/lamp.frag");
@@ -432,6 +436,15 @@ int main()
 		Position { vec3(0.97f, 0.14909f, 1.41f),-45.0f },
 		Position { vec3(-0.83f, 0.14909f, 1.55f),90.0f },
 		Position { vec3(-3.6071f, 0.14909f, 1.5123f),0.0f }
+	};
+	array<Position, 7> tableCouchPositions = {
+		Position { vec3(-2.3678f, 0.14909f, -4.061f),0.0f },
+		Position { vec3(0.5606f, 0.14909f, -3.6348f),90.0f },
+		Position { vec3(2.7052f, 0.14909f, -3.8304f),-20.0f },
+		Position { vec3(4.25454f, 0.14909f, -2.7174f),-65.0f },
+		Position { vec3(3.933f, 0.14909f, 2.2377f),135.0f },
+		Position { vec3(2.501f, 0.14909f, 3.4209f),135.0f },
+		Position { vec3(0.364891f, 0.14909f, 3.7824f),90.0f }
 	};
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO, EBO;
@@ -681,7 +694,7 @@ int main()
 		 * Bancos de la barra
 		*/
 		for (int i = 0; i < stoolPositions.size(); i++) {
-			drawInPosition(stoolPositions[i], Stool, VAO, lightingShader);
+			drawInPosition(stoolPositions[i], Stool, VAO, lightingShader, vec3(0.0f));
 		}
 
 		/*******************************************
@@ -692,186 +705,23 @@ int main()
 
 		for (int i = 0; i < tablePositions.size(); i++) {
 			drawTableTwoObjects(tablePositions[i].coordinates, VAO, lightingShader,
-				Stool, Table, tablePositions[i].orientation, vec3(0.0f, -0.16f, 0.27f));
+				Stool, Table, tablePositions[i].orientation, vec3(0.0f, -0.16f, 0.27f), vec3(0.0f), vec3(0.0f));
 		}
 		
 		/*******************************************
-		 *********** Carga mesas con sillion**********
+
+				 Carga mesas con sillion
+
 		*******************************************/
-		//************Mesa 8*************
-		//Table 8
-		mat4 modelMesa = mat4(1);
-		model = mat4(1);
-		modelMesa = translate(model, vec3(0.5606f, 0.054909f, -3.63));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
+
+		for (int i = 0; i < tableCouchPositions.size(); i++) {
+			drawTableTwoObjects(tableCouchPositions[i].coordinates, VAO, lightingShader,
+				Couch, Table, tableCouchPositions[i].orientation, vec3(0.0f, -0.08f, -0.23f), vec3(0.0f), vec3(0.0f,180.0f,0.0f));
+		}
+
+		
+
 		glBindVertexArray(0);
-
-		//Couch 1
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 2
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Table 9
-		model = mat4(1);
-		modelMesa = translate(model, vec3(-2.3678f, 0.054909f, -4.01));
-		modelMesa = rotate(modelMesa, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-		glBindVertexArray(0);
-
-		//Couch 2
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 3
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Table 10
-		model = mat4(1);
-		modelMesa = translate(model, vec3(2.7052f, 0.054909f, -3.83));
-		modelMesa = rotate(modelMesa, radians(54.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-		glBindVertexArray(0);
-
-		//Couch 4
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 5
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Table 10
-		model = mat4(1);
-		modelMesa = translate(model, vec3(4.2454f, 0.054909f, -2.7174));
-		modelMesa = rotate(modelMesa, radians(54.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-		glBindVertexArray(0);
-
-		//Couch 6
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 7
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Table 11
-		model = mat4(1);
-		modelMesa = translate(model, vec3(3.933f, 0.054909f, 2.2377));
-		modelMesa = rotate(modelMesa, radians(-140.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-		glBindVertexArray(0);
-
-		//Couch 8
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 9
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Table 12
-		model = mat4(1);
-		modelMesa = translate(model, vec3(2.511f, 0.054909f, 3.402));
-		modelMesa = rotate(modelMesa, radians(-140.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-		glBindVertexArray(0);
-
-		//Couch 10
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 11
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Table 13
-		model = mat4(1);
-		modelMesa = translate(model, vec3(0.3648f, 0.054909f, 3.7824));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMesa));
-		Table.Draw(lightingShader);
-		glBindVertexArray(0);
-
-		//Couch 12
-		model = mat4(1);
-		model = translate(modelMesa, vec3(0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
-
-		//Couch 13
-		model = mat4(1);
-		model = translate(modelMesa, vec3(-0.26f, -0.03f, 0.0));
-		model = rotate(model, radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-		glBindVertexArray(VAO);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Couch.Draw(lightingShader);
 
 		///*_______________________________Personaje Animado___________________________*/ 
 		//animShader.Use();
