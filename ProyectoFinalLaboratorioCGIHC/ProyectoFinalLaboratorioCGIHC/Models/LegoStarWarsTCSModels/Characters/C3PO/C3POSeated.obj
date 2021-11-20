@@ -1,4 +1,4 @@
-# Blender v2.93.0 OBJ File: ''
+# Blender v2.93.0 OBJ File: 'C3PO.blend'
 # www.blender.org
 mtllib C3POSeated.mtl
 o Mesh_0717_Mesh_0717Mesh
@@ -4488,7 +4488,7 @@ vn -0.2285 -0.7281 -0.6463
 vn -0.1835 -0.7558 -0.6285
 vn 0.7294 -0.6527 0.2047
 vn 0.5803 -0.7982 0.1617
-usemtl Tex_0085_0_dds
+usemtl C3PO
 s 1
 f 1/1/1 2/2/2 3/3/3
 f 3/3/3 2/2/2 4/4/4

@@ -1,4 +1,4 @@
-# Blender v2.93.0 OBJ File: ''
+# Blender v2.93.0 OBJ File: 'leia.blend'
 # www.blender.org
 mtllib LeiaSeated.mtl
 o Mesh_0021_Mesh_0021Mesh
@@ -3902,7 +3902,7 @@ vn 0.9499 0.2909 -0.1140
 vn 0.5531 0.5520 -0.6240
 vn -0.1911 0.5021 -0.8434
 vn 0.3143 0.5021 -0.8057
-usemtl Tex_0017_0_dds
+usemtl leia
 s 1
 f 1/1/1 2/2/2 3/3/3
 f 3/3/3 2/2/2 4/4/4

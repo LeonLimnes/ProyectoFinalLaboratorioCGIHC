@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd C:\\Users\\franc\\Desktop\\legoStarWarsModels\\_NinjaRipper\\2021.10.18_09.55.54_LEGOStarWarsSaga.exe_20180\\2021.10.18_10.58.57_LEGOStarWarsSaga.exe\\extra1.png
+map_Kd extra1.png
 
 newmtl extra1Cara.002
 Ns 225.000000
@@ -21,4 +21,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd C:\\Users\\franc\\Desktop\\legoStarWarsModels\\_NinjaRipper\\2021.10.18_09.55.54_LEGOStarWarsSaga.exe_20180\\2021.10.18_10.58.57_LEGOStarWarsSaga.exe\\extra1Cara.png
+map_Kd extra1Cara.png

@@ -138,7 +138,7 @@ void interpolation(void)
 }
 
 
-void drawInPosition(vec3 position, Model Object, GLuint VAO,Shader shader, vec3 rotation)
+void drawInPosition(vec3 position, Model Object, GLuint VAO, Shader shader, vec3 rotation)
 {
 	mat4 model = mat4(1);
 	model = translate(model, position);
@@ -155,8 +155,8 @@ void drawFromPivot(vec3 position, Model Object, GLuint VAO, Shader shader, mat4 
 {
 	mat4 model = mat4(1);
 	model = translate(Pivot, position);
-	model = rotate(model, radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
 	model = rotate(model, radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
+	model = rotate(model, radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
 	model = rotate(model, radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 	glBindVertexArray(VAO);
 	GLint modelLoc = glGetUniformLocation(shader.Program, "model");
@@ -268,6 +268,92 @@ int main()
 
 	//Sillon
 	Model Couch((char*)"Models/LegoStarWarsTCSModels/Forniture/Couch/couch.obj");
+
+
+	/*********************************
+			Personajes
+	*********************************/
+
+	//Extra1
+	Model Extra1((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra1/Extra1Seated.obj");
+
+	//Extra2
+	Model Extra2((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra2/Extra2Seated.obj");
+
+	//Extra3
+	Model Extra3((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra3/Extra3Seated.obj");
+
+	//Extra4
+	Model Extra4((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra4/Extra4Seated.obj");
+
+	//Extra5
+	Model Extra5((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra5/Extra5Seated.obj");
+
+	//Barman
+	Model Barman((char*)"Models/LegoStarWarsTCSModels/Characters/Barman/Barman.obj");
+
+	//Leia
+	Model Leia((char*)"Models/LegoStarWarsTCSModels/Characters/Leia/LeiaSeated.obj");
+
+	//C3PO
+	Model C3PO((char*)"Models/LegoStarWarsTCSModels/Characters/C3PO/C3POSeated.obj");
+
+	//R2D2
+	Model R2D2((char*)"Models/LegoStarWarsTCSModels/Characters/R2D2/R2D2.obj");
+
+	//Jawa
+	Model Jawa((char*)"Models/LegoStarWarsTCSModels/Characters/Jawa/Jawa.obj");
+
+	//StormTrooper
+	Model StormTrooper((char*)"Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooperSeated.obj");
+
+	// HanSolo
+	Model HanSolo((char*)"Models/LegoStarWarsTCSModels/Characters/HanSolo/HanSoloAiming.obj");
+
+	//Greedo
+	Model Greedo((char*)"Models/LegoStarWarsTCSModels/Characters/Greedo/GreedoAiming.obj");
+
+	//LukeSkyWalker
+	Model LukeSkyWalker((char*)"Models/LegoStarWarsTCSModels/Characters/LukeSkyWalker/LukeSkyWalker.obj");
+
+	//BenKenobi
+	Model BenKenobi((char*)"Models/LegoStarWarsTCSModels/Characters/BenKenobi/BenKenobiSaber.obj");
+
+	//DarthVader
+	Model DarthVader((char*)"Models/LegoStarWarsTCSModels/Characters/DarthVader/DarthVader.obj");
+
+	//StormTrooper
+	Model StormTrooperMounted((char*)"Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooperMounted.obj");
+
+	//Chewbaca
+	Model Chewbaca((char*)"Models/LegoStarWarsTCSModels/Characters/Chewbaca/Chewbaca.obj");
+
+	/*********************************
+			Elementos del entorno
+	*********************************/
+	//MugOrange
+	Model MugOrange((char*)"Models/LegoStarWarsTCSModels/Forniture/Mug/mugOrange.obj");
+
+	//MugYellow
+	Model MugYellow((char*)"Models/LegoStarWarsTCSModels/Forniture/Mug/mugYellow.obj");
+
+	//MugRed
+	Model MugRed((char*)"Models/LegoStarWarsTCSModels/Forniture/Mug/mugRed.obj");
+
+	//LampBase
+	Model LampBase((char*)"Models/LegoStarWarsTCSModels/Forniture/Lamp/LampBase.obj");
+	
+	//Lamp
+	Model Lamp((char*)"Models/LegoStarWarsTCSModels/Forniture/Lamp/Lamp1.obj");
+
+	//CupRed
+	Model CupRed((char*)"Models/LegoStarWarsTCSModels/Forniture/Cup/CupRed.obj");
+
+	//CupGrey
+	Model CupGrey((char*)"Models/LegoStarWarsTCSModels/Forniture/Cup/CupGrey.obj");
+
+	//CupPurple
+	Model CupPurple((char*)"Models/LegoStarWarsTCSModels/Forniture/Cup/CupPurple.obj");
 
 	////Modelo de animación
 	//ModelAnim animacionPersonaje("Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooper}.fbx");
@@ -719,9 +805,122 @@ int main()
 				Couch, Table, tableCouchPositions[i].orientation, vec3(0.0f, -0.08f, -0.23f), vec3(0.0f), vec3(0.0f,180.0f,0.0f));
 		}
 
-		
+		/*******************************************
 
-		glBindVertexArray(0);
+				 Carga Personajes
+
+		*******************************************/
+		//Extra1
+		drawInPosition(vec3(-1.330f, 0.2368f, -2.061f), Extra1, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		//Extra2
+		drawInPosition(vec3(-0.61805f, 0.2368f, 1.5148f), Extra2, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		//Extra3
+		drawInPosition(vec3(-1.6852f, 0.2368f, -0.8967f), Extra3, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		//Extra4
+		drawInPosition(vec3(-0.77857f, 0.2368f, -0.91304f), Extra4, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		//Extra5
+		drawInPosition(vec3(-2.65032f, 0.2368f, 0.5107f), Extra5, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
+		//Barman
+		drawInPosition(vec3(-0.30177f, 0.16282f, -0.1548f), Barman, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		//Leia
+		drawInPosition(vec3(0.60853f, 0.1879f, 3.7939f), Leia, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		//C3PO
+		drawInPosition(vec3(0.1072f, 0.1474f, 3.8105f), C3PO, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		//R2D2
+		drawInPosition(vec3(0.3168f, 0.1293f, 4.1478f), R2D2, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
+		//Jawa
+		drawInPosition(vec3(-1.1961f, 0.2859f, 0.4284f), Jawa, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
+		//StormTrooper1
+		drawInPosition(vec3(1.9167f, 0.23015f, -0.0039f), StormTrooper, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
+		//StormTrooper2
+		drawInPosition(vec3(1.9167f, 0.23015f, -0.4909f), StormTrooper, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		//Greedo
+		drawInPosition(vec3(3.5887f, 0.215107f, -2.8939f), Greedo, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		//Hansolo
+		drawInPosition(vec3(3.0367f, 0.1959f, -2.9502f), HanSolo, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		//LukeSkyWalker
+		drawInPosition(vec3(-0.63197f, 0.1861f, -3.639f), LukeSkyWalker, VAO, lightingShader, vec3(0.0f, 33.0f, 0.0f));
+		//BenKenobi
+		drawInPosition(vec3(-0.2029f, 0.16272f, -3.2736f), BenKenobi, VAO, lightingShader, vec3(0.0f, 42.2f, 0.0f));
+		//DarthVader
+		drawInPosition(vec3(4.0815f, 0.16256f, -0.1697f), DarthVader, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		//StormTrooperMounted1
+		drawInPosition(vec3(4.25247f, 0.18164f, -0.47043f), StormTrooperMounted, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		//StormTrooperMounted2
+		drawInPosition(vec3(4.25247f, 0.18164f, 0.2022f), StormTrooperMounted, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		//Chewbaca
+		drawInPosition(vec3(2.6819f, 0.18164f, 1.9075f), Chewbaca, VAO, lightingShader, vec3(0.0f, 26.1f, 0.0f));
+
+		/*******************************************
+
+				 Carga Tazas
+
+		*******************************************/
+		//MugOrange
+		drawInPosition(vec3(-3.5737f, 0.252157f, 1.5198f), MugOrange, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(0.5606f, 0.252157f, -3.6348f), MugOrange, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(2.5011f, 0.252157f,  3.4209f), MugOrange, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+
+		//MugYellow
+		drawInPosition(vec3(-3.2165f, 0.28177f, 0.26859f), MugYellow, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(-2.657f, 0.252157f, -2.1797f), MugYellow, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(-0.78311f, 0.28177f, -0.67255f), MugYellow, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		drawInPosition(vec3(4.2541f, 0.252157f, -2.7313f), MugYellow, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+
+		//MugRed
+		drawInPosition(vec3(1.01f, 0.252157f, 1.3778f), MugRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(-1.1853f, 0.27062f, -2.1602f), MugRed, VAO, lightingShader, vec3(0.0f, 180.0f, -14.8f));
+
+		/*******************************************
+
+				 Base Lamparas
+
+		*******************************************/
+		//LampBase
+		drawInPosition(vec3(-3.0212f, 0.82373f, -2.977f ), LampBase, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		drawInPosition(vec3( 2.1736f, 0.82373f, -2.7845f), LampBase, VAO, lightingShader, vec3(0.0f, 47.9f, 0.0f));
+		drawInPosition(vec3( 3.2908f, 0.82373f, -1.1816f), LampBase, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( 3.9499f, 0.82373f,  0.7824f), LampBase, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( 1.6387f, 0.82373f,  2.3833f), LampBase, VAO, lightingShader, vec3(0.0f, 270.0f, 0.0f));
+		drawInPosition(vec3(-0.8515f, 0.82373f,  2.3833f), LampBase, VAO, lightingShader, vec3(0.0f, 270.0f, 0.0f));
+		drawInPosition(vec3(-3.0212f, 0.82373f,  2.3833f), LampBase, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		/*******************************************
+
+				 Lamparas
+
+		*******************************************/
+
+		//Lamp
+		drawInPosition(vec3(-3.0212f, 0.82373f, -2.977f), Lamp, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		drawInPosition(vec3(2.1736f, 0.82373f, -2.7845f), Lamp, VAO, lightingShader, vec3(0.0f, 47.9f, 0.0f));
+		drawInPosition(vec3(3.2908f, 0.82373f, -1.1816f), Lamp, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(3.9499f, 0.82373f, 0.7824f), Lamp, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(1.6387f, 0.82373f, 2.3833f), Lamp, VAO, lightingShader, vec3(0.0f, 270.0f, 0.0f));
+		drawInPosition(vec3(-0.8515f, 0.82373f, 2.3833f), Lamp, VAO, lightingShader, vec3(0.0f, 270.0f, 0.0f));
+		drawInPosition(vec3(-3.0212f, 0.82373f, 2.3833f), Lamp, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+
+		//CupRed
+		drawInPosition(vec3(-2.3678f, 0.27079f, -4.1481f), CupRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( 3.872f, 0.02116f, -3.244f), CupRed, VAO, lightingShader, vec3(-90.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( 1.9174f, 0.28963f, -0.17249f), CupRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( 0.82174f, 0.28963f, -1.7235f), CupRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+
+		//CupGrey
+		drawInPosition(vec3(1.9174f, 0.28963f, -0.130435f), CupGrey, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(3.933f, 0.28029f, 2.2377f), CupGrey, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(-2.6566f, 0.26212f, 0.24098f), CupGrey, VAO, lightingShader, vec3(-90.0f, 76.3f, 0.0f));
+
+		//CupPurple
+		drawInPosition(vec3(-2.3678f, 0.27079f, -3.9796f), CupPurple, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( 0.36489f, 0.27079f, 3.7824f), CupPurple, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( -1.3051f,0.31865f, 0.30181f), CupPurple, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3( -1.5894f,0.31122f, -0.80489f), CupPurple, VAO, lightingShader, vec3(-32.16f, 0.0f, 0.0f));
+
+		glDisable(GL_BLEND);
 
 		///*_______________________________Personaje Animado___________________________*/ 
 		//animShader.Use();
