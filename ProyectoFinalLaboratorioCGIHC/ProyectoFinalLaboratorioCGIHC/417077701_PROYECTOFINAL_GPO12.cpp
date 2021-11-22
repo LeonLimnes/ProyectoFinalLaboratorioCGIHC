@@ -42,7 +42,7 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Camera
-Camera  camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera  camera(glm::vec3(0.0f, 0.5f, 0.0f));
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -53,7 +53,8 @@ float rot = 0.0f;
 
 // Light attributes
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
-glm::vec3 PosIni(-95.0f, 1.0f, -45.0f);
+//Posicion inicial del monito k frames
+glm::vec3 PosIni(2.4544f, 0.23264f, 6.2022f);
 glm::vec3 lightDirection(0.0f, -1.0f, -1.0f);
 
 bool active;
@@ -64,7 +65,9 @@ GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
 // Keyframes
-float posX =PosIni.x, posY = PosIni.y, posZ = PosIni.z, rotRodIzq = 0;
+//Inicializo los valores de k frames
+float posX =PosIni.x, posY = PosIni.y, posZ = PosIni.z,rotY=90, rotPataFder = 0, rotPataTder = 0, 
+rotPataFizq = 0, rotPataTizq = 0;
 
 #define MAX_FRAMES 9
 int i_max_steps = 190;
@@ -78,13 +81,21 @@ typedef struct _frame
 	float incX;		//Variable para IncrementoX
 	float incY;		//Variable para IncrementoY
 	float incZ;		//Variable para IncrementoZ
-	float rotRodIzq;
-	float rotInc;
+	float rotY;
+	float incRotY;
+	float rotPataFder;
+	float rotPataTder;
+	float rotPataFizq;
+	float rotPataTizq;
+	float incRotPataFder;
+	float incRotPataTder;
+	float incRotPataFizq;
+	float incRotPataTizq;
 
 }FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 0;			//introducir datos
+int FrameIndex = 8;			//introducir datos
 bool play = false;
 int playIndex = 0;
 
@@ -100,7 +111,7 @@ glm::vec3 LightP1;
 
 
 
-
+//Guardando los valores de los frames
 void saveFrame(void)
 {
 
@@ -109,20 +120,35 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].posX = posX;
 	KeyFrame[FrameIndex].posY = posY;
 	KeyFrame[FrameIndex].posZ = posZ;
+
+	KeyFrame[FrameIndex].rotPataFder = rotPataFder;
+	KeyFrame[FrameIndex].rotPataTder = rotPataTder;
+	KeyFrame[FrameIndex].rotPataFizq = rotPataFizq;
+	KeyFrame[FrameIndex].rotPataTizq = rotPataTizq;
 	
-	KeyFrame[FrameIndex].rotRodIzq = rotRodIzq;
+	KeyFrame[FrameIndex].rotY = rotY;
+
+	/*cout << "posx:" << posX << " posy:" << posY << " posZ:" << posZ
+		<< " rotPataFder" << rotPataFder << " rotPataTder" << rotPataTder
+		<< " rotPataFizq" << rotPataFizq << " rotPataTizq" << rotPataTizq
+		<< " rotY" << rotY << endl;*/
 	
 
 	FrameIndex++;
 }
-
+//para resetear las variables que manejan los frames
 void resetElements(void)
 {
 	posX = KeyFrame[0].posX;
 	posY = KeyFrame[0].posY;
 	posZ = KeyFrame[0].posZ;
 
-	rotRodIzq = KeyFrame[0].rotRodIzq;
+	rotPataFder = KeyFrame[0].rotPataFder;
+	rotPataTder = KeyFrame[0].rotPataTder;
+	rotPataFizq = KeyFrame[0].rotPataFizq;
+	rotPataTizq = KeyFrame[0].rotPataTizq;
+
+	rotY = KeyFrame[0].rotY;
 
 }
 
@@ -133,7 +159,12 @@ void interpolation(void)
 	KeyFrame[playIndex].incY = (KeyFrame[playIndex + 1].posY - KeyFrame[playIndex].posY) / i_max_steps;
 	KeyFrame[playIndex].incZ = (KeyFrame[playIndex + 1].posZ - KeyFrame[playIndex].posZ) / i_max_steps;
 	
-	KeyFrame[playIndex].rotInc = (KeyFrame[playIndex + 1].rotRodIzq - KeyFrame[playIndex].rotRodIzq) / i_max_steps;
+	KeyFrame[playIndex].incRotPataFder = (KeyFrame[playIndex + 1].rotPataFder - KeyFrame[playIndex].rotPataFder) / i_max_steps;
+	KeyFrame[playIndex].incRotPataTder = (KeyFrame[playIndex + 1].rotPataTder - KeyFrame[playIndex].rotPataTder) / i_max_steps;
+	KeyFrame[playIndex].incRotPataFizq = (KeyFrame[playIndex + 1].rotPataFizq - KeyFrame[playIndex].rotPataFizq) / i_max_steps;
+	KeyFrame[playIndex].incRotPataTizq = (KeyFrame[playIndex + 1].rotPataTizq - KeyFrame[playIndex].rotPataTizq) / i_max_steps;
+
+	KeyFrame[playIndex].incRotY = (KeyFrame[playIndex + 1].rotY - KeyFrame[playIndex].rotY) / i_max_steps;
 
 }
 
@@ -188,6 +219,24 @@ struct Position
 	vec3 coordinates;
 	float orientation;
 };
+
+//anim darthVader
+float rotVaderRightArm = 0.0f, rotCloneBody = 0.0f, posCloneBodyY = 0.0f;
+bool playAnimDarth = false;
+
+//anim han/greedo
+float rotHanBodyY = 0.0f, rotGreedoBodyZ = 0.0f, proyectile1T = 0.0f, proyectile2T = 0.0f, posGreedoBodyY = 0.0f;
+bool playAnimHan = false;
+
+
+//anim extra2
+float rotExtra2LeftArm = 0.0f, rotExtra2LeftHand = 0.0f;
+bool playAnimExtra2 = false;
+
+//anim r2d2
+float rotR2D2Head = 0.0f;
+bool playAnimR2D2;
+
 int main()
 {
 	// Init GLFW
@@ -278,7 +327,9 @@ int main()
 	Model Extra1((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra1/Extra1Seated.obj");
 
 	//Extra2
-	Model Extra2((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra2/Extra2Seated.obj");
+	Model Extra2Body((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra2/Extra2SeatedBody.obj");
+	Model Extra2LeftArm((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra2/Extra2SeatedLeftArm.obj");
+	Model Extra2LeftHand((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra2/Extra2SeatedLeftHand.obj");
 
 	//Extra3
 	Model Extra3((char*)"Models/LegoStarWarsTCSModels/Characters/LegoExtra3/Extra3Seated.obj");
@@ -299,7 +350,8 @@ int main()
 	Model C3PO((char*)"Models/LegoStarWarsTCSModels/Characters/C3PO/C3POSeated.obj");
 
 	//R2D2
-	Model R2D2((char*)"Models/LegoStarWarsTCSModels/Characters/R2D2/R2D2.obj");
+	Model R2D2Body((char*)"Models/LegoStarWarsTCSModels/Characters/R2D2/R2D2Body.obj");
+	Model R2D2Head((char*)"Models/LegoStarWarsTCSModels/Characters/R2D2/R2D2Head.obj");
 
 	//Jawa
 	Model Jawa((char*)"Models/LegoStarWarsTCSModels/Characters/Jawa/Jawa.obj");
@@ -320,7 +372,9 @@ int main()
 	Model BenKenobi((char*)"Models/LegoStarWarsTCSModels/Characters/BenKenobi/BenKenobiSaber.obj");
 
 	//DarthVader
-	Model DarthVader((char*)"Models/LegoStarWarsTCSModels/Characters/DarthVader/DarthVader.obj");
+	Model DarthVaderBody((char*)"Models/LegoStarWarsTCSModels/Characters/DarthVader/DarthVaderBody.obj");
+	Model DarthVaderRightArm((char*)"Models/LegoStarWarsTCSModels/Characters/DarthVader/DarthVaderRightArm.obj");
+
 
 	//StormTrooper
 	Model StormTrooperMounted((char*)"Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooperMounted.obj");
@@ -355,21 +409,62 @@ int main()
 	//CupPurple
 	Model CupPurple((char*)"Models/LegoStarWarsTCSModels/Forniture/Cup/CupPurple.obj");
 
+	//Proyectile
+	Model Proyectile((char*)"Models/LegoStarWarsTCSModels/Forniture/Proyectile/Proyectile.obj");
+
+	/*********************************
+			Vehiculos
+	*********************************/
+
+	//DewBack
+	Model DewbackBody((char*)"Models/LegoStarWarsTCSModels/Vehichles/DewBack/DewbackBody.obj");
+
+	Model DewbackFRightLeg((char*)"Models/LegoStarWarsTCSModels/Vehichles/DewBack/DewbackFRightLeg.obj");
+
+	Model DewbackBRightLeg((char*)"Models/LegoStarWarsTCSModels/Vehichles/DewBack/DewbackBRightLeg.obj");
+
+	Model DewbackFLeftLeg((char*)"Models/LegoStarWarsTCSModels/Vehichles/DewBack/DewbackFLeftLeg.obj");
+
+	Model DewbackBLeftLeg((char*)"Models/LegoStarWarsTCSModels/Vehichles/DewBack/DewbackBLeftLeg.obj");
+
 	////Modelo de animación
-	//ModelAnim animacionPersonaje("Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooper}.fbx");
+	//ModelAnim animacionPersonaje("Models/LegoStarWarsTCSModels/Characters/StormTrooper/StormTrooper.dae");
 	//animacionPersonaje.initShaders(animShader.Program);
 
-
+	float animDewback [MAX_FRAMES][8] = {
+		{2.4540f,0.23264f,6.2022f,0.0f,0.0f,0.0f,0.0f,90.0f},
+		{3.0544f,0.23264f,6.2022f,-12.0f,7.0f,17.0f,-9.0f,95.0f},
+		{3.55439f,0.23264f,6.0022f,7.99998f,-10.0f,-8.99999f,13.0f,117.0f},
+		{4.15439f,0.23264f,5.1022f,-21.0f,12.0f,7.0f,-15.0f,126.0f},
+		{4.95437f,0.23264f,4.40215f,3.9994f,29.0f,-26.0f,4.0f,144.999f},
+		{5.95437f,0.23264f,3.30215f,-35.0001f,43.0f,-3.999f,5.99998f,151.999f},
+		{6.05437f,0.23264f,2.60215f,-39.0001f,-14.0f,-46.0f,-13.0f,169.999f},
+		{6.05441f,0.23264f,1.90208f,-0.0f,34.0f,-8.0f,33.0f,169.997f},
+		{6.05441f,0.23264f,0.9020082f,-44.0f,23.0f,-33.0f,-7.0f,169.997f},
+	};
 	//Inicialización de KeyFrames
-	
+	//aqui se cargan
 	for(int i=0; i<MAX_FRAMES; i++)
 	{
-		KeyFrame[i].posX = 0;
+		KeyFrame[i].posX = animDewback[i][0];
+		KeyFrame[i].posY = animDewback[i][1];
+		KeyFrame[i].posZ = animDewback[i][2];
+
 		KeyFrame[i].incX = 0;
 		KeyFrame[i].incY = 0;
 		KeyFrame[i].incZ = 0;
-		KeyFrame[i].rotRodIzq = 0;
-		KeyFrame[i].rotInc = 0;
+
+		KeyFrame[i].rotPataFder = animDewback[i][3];
+		KeyFrame[i].rotPataTder = animDewback[i][4];
+		KeyFrame[i].rotPataFizq = animDewback[i][5];
+		KeyFrame[i].rotPataTizq = animDewback[i][6];
+		KeyFrame[i].rotY = animDewback[i][7];
+
+		KeyFrame[i].incRotPataFder = 0;
+		KeyFrame[i].incRotPataTder = 0;
+		KeyFrame[i].incRotPataFizq = 0;
+		KeyFrame[i].incRotPataTizq = 0;
+		KeyFrame[i].incRotY = 0;
 	}
 
 
@@ -714,61 +809,38 @@ int main()
 		*		CARGA DE MODELOS		 *
 		*								 *
 		**********************************/
-		//Personaje
-		glm::mat4 model(1);
-		tmp = model = glm::translate(model, glm::vec3(0, 1, 0));
-		model = glm::translate(model,glm::vec3(posX,posY,posZ));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Torso.Draw(lightingShader);
-		//Pierna Izq
-		model = glm::translate(tmp, glm::vec3(-0.5f, 0.0f, -0.1f));
-		model = glm::translate(model, glm::vec3(posX, posY, posZ));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0));
-		model = glm::rotate(model, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		PiernaDer.Draw(lightingShader);
-		//Pie Izq
-		model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		BotaDer.Draw(lightingShader);
+		//Dewback
+		mat4 model(1);
+		mat4 DewbackBodyMatrix = model;
+		DewbackBodyMatrix = translate(DewbackBodyMatrix, glm::vec3(posX, posY, posZ));
+		DewbackBodyMatrix = rotate(DewbackBodyMatrix, glm::radians(rotY), glm::vec3(0.0f, 1.0f, 0.0));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(DewbackBodyMatrix));
+		DewbackBody.Draw(lightingShader);
 
-		//Pierna Der
-		model = glm::translate(tmp, glm::vec3(0.5f, 0.0f, -0.1f));
-		model = glm::translate(model, glm::vec3(posX, posY, posZ));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		PiernaIzq.Draw(lightingShader);
-		//Pie Der
-		view = camera.GetViewMatrix();
-		model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		BotaDer.Draw(lightingShader);
 
-		//Brazo derecho
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(posX, posY, posZ));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::translate(model, glm::vec3(-0.75f, 2.5f, 0));
+		////Pierna frontal derecha
+		model = translate(DewbackBodyMatrix, glm::vec3(-0.15935f, 0.013264f, 0.43353f));
+		model = rotate(model, glm::radians(rotPataFder), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		BrazoDer.Draw(lightingShader);
+		DewbackFRightLeg.Draw(lightingShader);
 
-		//Brazo Izquierdo
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(posX, posY, posZ));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::translate(model, glm::vec3(0.75f, 2.5f, 0));
+		////Pierna frontal izquierda
+		model = translate(DewbackBodyMatrix, glm::vec3(0.13065f, 0.003264f, 0.44353f));
+		model = rotate(model, glm::radians(rotPataFizq), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		BrazoIzq.Draw(lightingShader);
+		DewbackFLeftLeg.Draw(lightingShader);
 
-		//Cabeza
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(posX, posY, posZ));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0));
-		model = glm::translate(model, glm::vec3(0.0f, 2.5f, 0));
+		////Pierna trasera derecha
+		model = translate(DewbackBodyMatrix, glm::vec3(-0.15935f, -0.006736f, -0.046474f));
+		model = rotate(model, glm::radians(rotPataTder), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Cabeza.Draw(lightingShader);
+		DewbackBRightLeg.Draw(lightingShader);
+
+		////Pierna trasera izquierda
+		model = translate(DewbackBodyMatrix, glm::vec3(0.17395f, 0.005927f, -0.022154f));
+		model = rotate(model, glm::radians(rotPataTizq), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		DewbackBLeftLeg.Draw(lightingShader);
 
 		//Cantina
 		model = glm::mat4(1);
@@ -784,7 +856,7 @@ int main()
 		}
 
 		/*******************************************
-		
+
 					Carga mesas con banco
 
 		*******************************************/
@@ -793,7 +865,7 @@ int main()
 			drawTableTwoObjects(tablePositions[i].coordinates, VAO, lightingShader,
 				Stool, Table, tablePositions[i].orientation, vec3(0.0f, -0.16f, 0.27f), vec3(0.0f), vec3(0.0f));
 		}
-		
+
 		/*******************************************
 
 				 Carga mesas con sillion
@@ -802,7 +874,7 @@ int main()
 
 		for (int i = 0; i < tableCouchPositions.size(); i++) {
 			drawTableTwoObjects(tableCouchPositions[i].coordinates, VAO, lightingShader,
-				Couch, Table, tableCouchPositions[i].orientation, vec3(0.0f, -0.08f, -0.23f), vec3(0.0f), vec3(0.0f,180.0f,0.0f));
+				Couch, Table, tableCouchPositions[i].orientation, vec3(0.0f, -0.08f, -0.23f), vec3(0.0f), vec3(0.0f, 180.0f, 0.0f));
 		}
 
 		/*******************************************
@@ -813,7 +885,27 @@ int main()
 		//Extra1
 		drawInPosition(vec3(-1.330f, 0.2368f, -2.061f), Extra1, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
 		//Extra2
-		drawInPosition(vec3(-0.61805f, 0.2368f, 1.5148f), Extra2, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		mat4 Extra2Matrix = mat4(1);
+		Extra2Matrix = translate(Extra2Matrix, vec3(-0.61805f, 0.2368f, 1.5148f));
+		Extra2Matrix = rotate(Extra2Matrix, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(Extra2Matrix));
+		Extra2Body.Draw(lightingShader);
+
+		mat4 Extra2Arm = mat4(1);
+		Extra2Arm = translate(Extra2Matrix, vec3(0.036248f, 0.04077f, -0.006224f));
+		Extra2Arm = rotate(Extra2Arm, radians(rotExtra2LeftArm), vec3(1.0f, 0.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(Extra2Arm));
+		Extra2LeftArm.Draw(lightingShader);
+
+		mat4 Extra2Hand = mat4(1);
+		Extra2Hand = translate(Extra2Arm, vec3(0.054413f, -0.016304f, 0.058673));
+		Extra2Hand = rotate(Extra2Hand, radians(rotExtra2LeftHand), vec3(0.0f, 0.0f, 1.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(Extra2Hand));
+		Extra2LeftHand.Draw(lightingShader);
+
 		//Extra3
 		drawInPosition(vec3(-1.6852f, 0.2368f, -0.8967f), Extra3, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
 		//Extra4
@@ -827,23 +919,91 @@ int main()
 		//C3PO
 		drawInPosition(vec3(0.1072f, 0.1474f, 3.8105f), C3PO, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
 		//R2D2
-		drawInPosition(vec3(0.3168f, 0.1293f, 4.1478f), R2D2, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
+		mat4 R2D2Matrix = mat4(1);
+		R2D2Matrix = translate(R2D2Matrix, vec3(0.3168f, 0.1293f, 4.1478f));
+		R2D2Matrix = rotate(R2D2Matrix, radians(180.0f), vec3(0.0f, 1.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(R2D2Matrix));
+		R2D2Body.Draw(lightingShader);
+		
+		model = mat4(1);
+		model = translate(R2D2Matrix, vec3(0.001126f, 0.195f, -0.007995f));
+		model = rotate(model, radians(rotR2D2Head), vec3(0.0f, 1.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		R2D2Head.Draw(lightingShader);
+
 		//Jawa
 		drawInPosition(vec3(-1.1961f, 0.2859f, 0.4284f), Jawa, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
 		//StormTrooper1
 		drawInPosition(vec3(1.9167f, 0.23015f, -0.0039f), StormTrooper, VAO, lightingShader, vec3(0.0f, 180.0f, 0.0f));
+
 		//StormTrooper2
-		drawInPosition(vec3(1.9167f, 0.23015f, -0.4909f), StormTrooper, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		mat4 StormTrooperMatrix = mat4(1);
+		StormTrooperMatrix = translate(StormTrooperMatrix, vec3(1.9167f, 0.23015f, -0.4909f));
+		StormTrooperMatrix = translate(StormTrooperMatrix, vec3(0.0f, posCloneBodyY, 0.0f));
+		StormTrooperMatrix = rotate(StormTrooperMatrix, radians(rotCloneBody), vec3(1.0f, 0.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(StormTrooperMatrix));
+		StormTrooper.Draw(lightingShader);
+
 		//Greedo
-		drawInPosition(vec3(3.5887f, 0.215107f, -2.8939f), Greedo, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		mat4 GreedoMatrix = mat4(1);
+		GreedoMatrix = translate(GreedoMatrix, vec3(3.5887f, 0.15107f, -2.8939f));
+		GreedoMatrix = rotate(GreedoMatrix, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+		GreedoMatrix = translate(GreedoMatrix, vec3(0.0f, posGreedoBodyY, 0.0f));
+		GreedoMatrix = rotate(GreedoMatrix, radians(-rotGreedoBodyZ), vec3(1.0f, 0.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(GreedoMatrix));
+		Greedo.Draw(lightingShader);
+		
+		//Proyectile2
+		model = mat4(1);
+		model = translate(model, vec3(3.4643f, 0.24266f, -2.9742f));
+		model = rotate(model, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+		model = translate(model, vec3(0.0f, 0.0f, proyectile2T));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		Proyectile.Draw(lightingShader);
+
 		//Hansolo
-		drawInPosition(vec3(3.0367f, 0.1959f, -2.9502f), HanSolo, VAO, lightingShader, vec3(0.0f, 90.0f, 0.0f));
+		model = mat4(1);
+		model = translate(model, vec3(3.0367f, 0.1959f, -2.9842f));
+		model = rotate(model, radians(94.4f), vec3(0.0f, 1.0f, 0.0f));
+		model = rotate(model, radians(-rotHanBodyY), vec3(0.0f, 1.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		HanSolo.Draw(lightingShader);
+
+		//Proyectile1
+		model = mat4(1);
+		model = translate(model, vec3(3.195f, 0.22943f, -2.8994f));
+		model = rotate(model, radians(95.3f), vec3(0.0f, 1.0f, 0.0f));
+		model = rotate(model, radians(-0.812f), vec3(0.0f, 0.0f, 1.0f));
+		model = translate(model, vec3(0.0f, 0.0f, proyectile1T));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		Proyectile.Draw(lightingShader);
+		
 		//LukeSkyWalker
 		drawInPosition(vec3(-0.63197f, 0.1861f, -3.639f), LukeSkyWalker, VAO, lightingShader, vec3(0.0f, 33.0f, 0.0f));
 		//BenKenobi
 		drawInPosition(vec3(-0.2029f, 0.16272f, -3.2736f), BenKenobi, VAO, lightingShader, vec3(0.0f, 42.2f, 0.0f));
 		//DarthVader
-		drawInPosition(vec3(4.0815f, 0.16256f, -0.1697f), DarthVader, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
+		mat4 DarthVaderMatrix = mat4(1);
+		DarthVaderMatrix = translate(DarthVaderMatrix, vec3(4.01859f, 0.1656f, -0.16975f));
+		DarthVaderMatrix = rotate(DarthVaderMatrix, radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(DarthVaderMatrix));
+		DarthVaderBody.Draw(lightingShader);
+
+		model = mat4(1);
+		model = translate(DarthVaderMatrix, vec3(-0.038212f, 0.054847f, -0.012091f));
+		model = rotate(model, radians(rotVaderRightArm), vec3(1.0, 0.0, 0.0));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		DarthVaderRightArm.Draw(lightingShader);
+	
 		//StormTrooperMounted1
 		drawInPosition(vec3(4.25247f, 0.18164f, -0.47043f), StormTrooperMounted, VAO, lightingShader, vec3(0.0f, -90.0f, 0.0f));
 		//StormTrooperMounted2
@@ -907,10 +1067,15 @@ int main()
 		drawInPosition(vec3(-2.3678f, 0.27079f, -4.1481f), CupRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
 		drawInPosition(vec3( 3.872f, 0.02116f, -3.244f), CupRed, VAO, lightingShader, vec3(-90.0f, 0.0f, 0.0f));
 		drawInPosition(vec3( 1.9174f, 0.28963f, -0.17249f), CupRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
-		drawInPosition(vec3( 0.82174f, 0.28963f, -1.7235f), CupRed, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		model = mat4(1);
+		model = translate(Extra2Hand, vec3(0.007032f, 0.030808f, 0.042931f));
+		model = rotate(model, radians(-30.0f), vec3(1.0f, 0.0f, 0.0f));
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		CupRed.Draw(lightingShader);
 
 		//CupGrey
-		drawInPosition(vec3(1.9174f, 0.28963f, -0.130435f), CupGrey, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
+		drawInPosition(vec3(1.9174f, 0.28963f, -0.30435f), CupGrey, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
 		drawInPosition(vec3(3.933f, 0.28029f, 2.2377f), CupGrey, VAO, lightingShader, vec3(0.0f, 0.0f, 0.0f));
 		drawInPosition(vec3(-2.6566f, 0.26212f, 0.24098f), CupGrey, VAO, lightingShader, vec3(-90.0f, 76.3f, 0.0f));
 
@@ -922,27 +1087,27 @@ int main()
 
 		glDisable(GL_BLEND);
 
-		///*_______________________________Personaje Animado___________________________*/ 
-		//animShader.Use();
-		//modelLoc = glGetUniformLocation(animShader.Program, "model");
-		//viewLoc = glGetUniformLocation(animShader.Program, "view");
-		//projLoc = glGetUniformLocation(animShader.Program, "projection");
+		/*_______________________________Personaje Animado___________________________*/ 
+		/*animShader.Use();
+		modelLoc = glGetUniformLocation(animShader.Program, "model");
+		viewLoc = glGetUniformLocation(animShader.Program, "view");
+		projLoc = glGetUniformLocation(animShader.Program, "projection");
 
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		//glUniform3f(glGetUniformLocation(animShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f);
-		//glUniform1f(glGetUniformLocation(animShader.Program, "material.shininess"), 32.0f);
-		//glUniform3f(glGetUniformLocation(animShader.Program, "light.ambient"), 0.0f, 1.0f, 1.0f);
-		//glUniform3f(glGetUniformLocation(animShader.Program, "light.diffuse"), 0.0f, 1.0f, 1.0f);
-		//glUniform3f(glGetUniformLocation(animShader.Program, "light.specular"), 0.5f, 0.5f, 0.5f);
-		//glUniform3f(glGetUniformLocation(animShader.Program, "light.direction"),0.0f, -1.0f, -1.0f);
-		//view = camera.GetViewMatrix();
-		//model = glm::mat4(1);
-		//glBindVertexArray(VAO);
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//animacionPersonaje.Draw(animShader);
-
+		glUniform3f(glGetUniformLocation(animShader.Program, "material.specular"), 0.5f, 0.5f, 0.5f);
+		glUniform1f(glGetUniformLocation(animShader.Program, "material.shininess"), 32.0f);
+		glUniform3f(glGetUniformLocation(animShader.Program, "light.ambient"), 0.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(animShader.Program, "light.diffuse"), 0.0f, 1.0f, 1.0f);
+		glUniform3f(glGetUniformLocation(animShader.Program, "light.specular"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(animShader.Program, "light.direction"),0.0f, -1.0f, -1.0f);
+		view = camera.GetViewMatrix();
+		model = mat4(1);
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		animacionPersonaje.Draw(animShader);
+*/
 
 
 
@@ -952,29 +1117,7 @@ int main()
 
 		// Also draw the lamp object, again binding the appropriate shader
 		lampShader.Use();
-		// Get location objects for the matrices on the lamp shader (these could be different on a different shader)
-		modelLoc = glGetUniformLocation(lampShader.Program, "model");
-		viewLoc = glGetUniformLocation(lampShader.Program, "view");
-		projLoc = glGetUniformLocation(lampShader.Program, "projection");
-
-		// Set matrices
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		model = glm::mat4(1);
-		model = glm::translate(model, lightPos);
-		//model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		// Draw the light object (using light's vertex attributes)
-		glBindVertexArray(lightVAO);
-		for (GLuint i = 0; i < 4; i++)
-		{
-			model = glm::mat4(1);
-			model = glm::translate(model, pointLightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		glBindVertexArray(0);
+		
 
 
 		// Draw skybox as last
@@ -1017,9 +1160,108 @@ int main()
 	return 0;
 }
 
-
+int stateAnimDarth = 1;
+int stateAnimHan = 1;
+int stateAnimExtra2 = 1;
+int stateAnimR2D2 = 1;
 void animacion()
 {
+	if (playAnimR2D2) {
+		switch (stateAnimR2D2)
+		{
+		case 1:
+			rotR2D2Head += 0.5;
+			if (rotR2D2Head > 45.0f) {
+				stateAnimR2D2 = 2;
+				break;
+			}
+			break;
+		case 2:
+			rotR2D2Head -= 0.5f;
+			if (rotR2D2Head < -45.0f) {
+				stateAnimR2D2 = 1;
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	if (playAnimExtra2) {
+		switch (stateAnimExtra2)
+		{
+		case 1:
+			rotExtra2LeftHand += 0.5f;
+			if (rotExtra2LeftHand > 40.0f) {
+				stateAnimExtra2 = 2;
+				break;
+			}
+			break;
+		case 2:
+			rotExtra2LeftArm -= 0.3f;
+			if (rotExtra2LeftArm < -15.0f) {
+				stateAnimExtra2 = 3;
+				break;
+			}
+			break;
+		case 3:
+			rotExtra2LeftArm += 0.3f;
+			if (rotExtra2LeftArm > 5.0f) {
+				stateAnimExtra2 = 2;
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	if (playAnimHan) {
+		switch (stateAnimHan)
+		{
+		case 1:
+			proyectile1T += 0.01f;
+			cout << " proyectile1T " << proyectile1T << endl;
+			proyectile2T += 0.02f;
+			rotHanBodyY -= 3.0f;
+			if (proyectile1T > 0.4) {
+				stateAnimHan = 2;
+				break;
+			}
+			break;
+		case 2:
+			proyectile1T = 10.0f;
+			proyectile2T = 10.0f; 
+			rotGreedoBodyZ += 1.0f;
+			posGreedoBodyY -= 0.001f;
+			if (rotGreedoBodyZ > 90) {
+				stateAnimHan = 0;
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
+	if (playAnimDarth) {
+
+		switch (stateAnimDarth)
+		{
+		case 1:
+			rotVaderRightArm -= 1.5f;
+			posCloneBodyY += 0.01f;
+			rotCloneBody += 1.0f;
+			if (posCloneBodyY > 0.5) {
+				stateAnimDarth = 2;
+				break;
+			}
+			break;
+		case 2:
+			rotCloneBody = (rotCloneBody + 0.5f);
+		default:
+			break;
+		}
+	}
 
 		//Movimiento del personaje
 
@@ -1048,7 +1290,11 @@ void animacion()
 				posY += KeyFrame[playIndex].incY;
 				posZ += KeyFrame[playIndex].incZ;
 
-				rotRodIzq += KeyFrame[playIndex].rotInc;
+				rotPataFder += KeyFrame[playIndex].incRotPataFder;
+				rotPataTder += KeyFrame[playIndex].incRotPataTder;
+				rotPataFizq += KeyFrame[playIndex].incRotPataFizq;
+				rotPataTizq += KeyFrame[playIndex].incRotPataTizq;
+				rotY += KeyFrame[playIndex].incRotY;
 
 				i_curr_steps++;
 			}
@@ -1089,6 +1335,28 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 
 	}
 
+	if (keys[GLFW_KEY_P])
+	{
+		playAnimDarth = !playAnimDarth;
+
+	}
+
+	if (keys[GLFW_KEY_O])
+	{
+		playAnimHan = !playAnimHan;
+
+	}
+	if (keys[GLFW_KEY_I])
+	{
+		playAnimExtra2 = !playAnimExtra2;
+
+	}
+
+	if (keys[GLFW_KEY_U])
+	{
+		playAnimR2D2 = !playAnimR2D2;
+
+	}
 
 	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
 	{
@@ -1143,45 +1411,76 @@ void DoMovement()
 	if (keys[GLFW_KEY_1])
 	{
 
-		rot += 1;
+		rotY += 1;
 
 	}
-
+	
 	if (keys[GLFW_KEY_2])
 	{
-		if (rotRodIzq<80.0f)
-			rotRodIzq += 1.0f;
-			
+		rotExtra2LeftArm += 1.0f;
+		
 	}
 
 	if (keys[GLFW_KEY_3])
 	{
-		if (rotRodIzq>-45)
-			rotRodIzq -= 1.0f;
-		
+
+		rotExtra2LeftArm -= 1.0f;
 	}
+	if (keys[GLFW_KEY_4])
+	{
+	
+		rotExtra2LeftHand += 1.0f;
+	}
+
+	if (keys[GLFW_KEY_5])
+	{
+		rotExtra2LeftHand -= 1.0f;
+	}
+	if (keys[GLFW_KEY_6])
+	{
+		proyectile1T += 0.1f;
+		cout << "proyectile1T = " << proyectile1T << endl;
+	}
+
+	if (keys[GLFW_KEY_7])
+	{
+		proyectile1T -= 0.1f;
+		cout << "proyectile1T = " << proyectile1T << endl;
+	}
+	if (keys[GLFW_KEY_8])
+	{
+		proyectile2T += 0.1f;
+
+	}
+
+	if (keys[GLFW_KEY_9])
+	{
+		proyectile2T -= 0.1f;
+
+	}
+
 
 	
 
 	//Mov Personaje
 	if (keys[GLFW_KEY_H])
 	{
-		posZ += 1;
+		posZ += 0.1;
 	}
 
 	if (keys[GLFW_KEY_Y])
 	{
-		posZ -= 1;
+		posZ -= 0.1;
 	}
 
 	if (keys[GLFW_KEY_G])
 	{
-		posX -= 1;
+		posX -= 0.1;
 	}
 
 	if (keys[GLFW_KEY_J])
 	{
-		posX += 1;
+		posX += 0.1;
 	}
 
 
